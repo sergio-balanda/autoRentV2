@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
+import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
 import org.springframework.stereotype.Service;
@@ -23,40 +24,20 @@ public class ServicioVehiculoImpl implements ServicioVehiculo{
 	public Integer maxPasajeros() {
 		return vehiculoDao.maxPasajeros();
 	}
-
+	
 	@Override
-	public Vehiculo buscarhiculos(Long id) {
-		return vehiculoDao.buscarVehiculos(id);
+	public Vehiculo buscarhiculos(Integer idVehiculo) {
+		return vehiculoDao.buscarVehiculos(idVehiculo);
 	}
 
+	@Override
+	public Vehiculo buscarfkSucursalV(Integer fkSucursalV) {
+		return vehiculoDao.buscarfkSucursalV(fkSucursalV);
+	}
+	//new
 	@Override
 	public List<Vehiculo> listarVehiculos() {
 		return vehiculoDao.listarVehiculos();
-	}
-
-	@Override
-	public Vehiculo guardarVehiculo(Long id, String patente, String marca, String nombre, String imagen,
-			Integer capacidadPasajeros, Integer capacidadValijas, Integer kilometraje) {
-		Vehiculo vehiculo = null;
-
-		if (id!=null) {
-			vehiculo = vehiculoDao.buscarVehiculos(id);
-		} else {
-			vehiculo = new Vehiculo();
-		}
-		
-		vehiculo.setPatente(patente);;
-		vehiculo.setMarca(marca);
-		vehiculo.setNombre(nombre);
-		vehiculo.setImagen(imagen);
-		vehiculo.setCapacidadPasajeros(capacidadPasajeros);
-		vehiculo.setCapacidadValijas(capacidadValijas);
-		vehiculo.setKilometraje(kilometraje);
-		
-		vehiculoDao.guardarNuevoVehiculo(vehiculo);
-
-		
-		return vehiculo;
 	}
 	
 }

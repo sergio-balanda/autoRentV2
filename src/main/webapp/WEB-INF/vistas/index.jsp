@@ -26,14 +26,11 @@
 				<div class="panel-heading">Bienvenido</div>
 				<div class="panel-body">
 					<p>
-						<a href="listas" class="btn btn-success"
-							style="margin-left: 100px">Listas</a>
+						<a href="pasajeros" class="btn btn-success"
+							style="margin-left: 100px">Iniciar Reserva</a>
 					</p>
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<a href="registrar-vehiculo" class="btn btn-primary">Nuevo</a>
 		</div>
 	</div>
 </body>

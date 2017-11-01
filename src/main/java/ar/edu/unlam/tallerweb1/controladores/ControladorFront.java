@@ -3,7 +3,6 @@ package ar.edu.unlam.tallerweb1.controladores;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
@@ -11,10 +10,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-
-import ar.edu.unlam.tallerweb1.modelo.Vehiculo;
+import ar.edu.unlam.tallerweb1.modelo.Sucursal;
+import ar.edu.unlam.tallerweb1.servicios.ServicioReserva;
+import ar.edu.unlam.tallerweb1.servicios.ServicioSucursal;
 import ar.edu.unlam.tallerweb1.servicios.ServicioVehiculo;
 
 @Controller
@@ -22,51 +21,58 @@ public class ControladorFront {
 
 	@Inject
 	private ServicioVehiculo servicioVehiculo;
+	@Inject
+	private ServicioSucursal servicioSucursal;
+	@Inject
+	private ServicioReserva servicioReserva;
+
+
+	@RequestMapping("/vehiculos")
+	public ModelAndView verVehiculos(@RequestParam("cantidad") Integer cant, 
+									 @RequestParam("sucursal") String sucursal,
+									 @RequestParam("fch_desde") String fch_desde,
+									 @RequestParam("fch_hasta") String fch_hasta) {
+		ModelMap modelo = new ModelMap();
+		modelo.put("vehiculos", servicioVehiculo.listarVehiculosXPasajeros(cant, sucursal , fch_desde , fch_hasta));
+		modelo.put("sucursal", sucursal);
+		modelo.put("fch_desde", fch_desde);
+		modelo.put("fch_hasta", fch_hasta);
+		return new ModelAndView("vehiculos", modelo);
+	}
 
 	@RequestMapping(path="/")
 	public ModelAndView inicio() {
 		return new ModelAndView("index");
 	}
 
-	//ACA SE LISTA TODO
-	@RequestMapping("/listas")
-	public ModelAndView irAListarTodo(){
+	@RequestMapping("/pasajeros")
+	public ModelAndView selectPasajeros() {
 		ModelMap modelo = new ModelMap();
-		modelo.put("v", servicioVehiculo.listarVehiculos());
-		return new ModelAndView("listas",modelo);
+		modelo.put("max", servicioVehiculo.maxPasajeros());
+		modelo.put("sucursal", servicioSucursal.obtenerSucursales());
+		return new ModelAndView("pasajeros", modelo);
 	}
 	
-	@RequestMapping("/registrar-vehiculo")
-	public ModelAndView nuevoVehiculo(HttpServletRequest request){
-				ModelMap modelo = new ModelMap();
-				return new ModelAndView("registrar-vehiculo", modelo);
-	}
-	
-	@RequestMapping(path = "/registro-usuario", method = RequestMethod.GET)
-	public ModelAndView irARegistroUsuario() {
+	@RequestMapping("/generaReserva")
+	public ModelAndView generaReserva (@RequestParam ("idVehiculo") Integer id,
+									   @RequestParam ("idVehiculo") Integer fkVehiculo,
+									   @RequestParam (required=false, value="fkSucursalV") Integer fkSucursalV,
+									   @RequestParam ("fchdesde") String fdsd,
+									   @RequestParam ("fchhasta") String fhst,
+									   @RequestParam ("sucursal") String suc)
+	{	
 		ModelMap modelo = new ModelMap();
-		Vehiculo vehiculo = new Vehiculo();
+		Integer idBuscar = id;
+		modelo.put("vehiculo", servicioVehiculo.buscarhiculos(idBuscar));
+		modelo.put("idSucursal",servicioVehiculo.buscarfkSucursalV(idBuscar));
+		modelo.put("idVehiculo",id);
+		modelo.put("fdsd",fdsd);
+		modelo.put("fhst",fhst);
+		modelo.put("suc",suc);
+		servicioReserva.guardarReserva(id, suc, fdsd, fhst, fkVehiculo,fkSucursalV);
 
-		modelo.put("vehiculo", vehiculo);
-		return new ModelAndView("registrar-vehiculo", modelo);
+		return new ModelAndView("reserva",modelo);
 	}
+
 	
-	
-	@RequestMapping(path="registrar-vehiculo",method=RequestMethod.POST)
-	public ModelAndView registrarVehiculo(@RequestParam (required=false, value="id") Long id,
-			@RequestParam (required=false, value="patente") String patente,
-			@RequestParam (required=false, value="marca") String marca,
-			@RequestParam (required=false, value="nombre") String nombre,
-			@RequestParam (required=false, value="imagen") String imagen,
-			@RequestParam (required=false, value="capacidadPasajeros") Integer capacidadPasajeros,
-			@RequestParam (required=false, value="kilometraje") Integer kilometraje,
-			@RequestParam (required=false, value="capacidadValijas") Integer capacidadValijas,
-			HttpServletRequest request
-			) {
-		
-		servicioVehiculo.guardarVehiculo(id, patente, marca, nombre, imagen, capacidadPasajeros, capacidadValijas, kilometraje);
-		
-		return new ModelAndView("redirect:/listas?mensaje=guardado.!!!");
-		
-	}
 }

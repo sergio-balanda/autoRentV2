@@ -61,26 +61,28 @@ public class VehiculoDaoImpl implements VehiculoDao {
 					.uniqueResult();
 		return max;
 	}
-
+	
 	@Override
-	public Vehiculo buscarVehiculos(Long id) {
+	public Vehiculo buscarVehiculos(Integer idVehiculo) {
 		final Session  session = sessionFactory.getCurrentSession();
 		Vehiculo vehiculo = (Vehiculo) session.createCriteria(Vehiculo.class)
-				.add(Restrictions.eq("id", id)).uniqueResult();
+				.add(Restrictions.eq("id", idVehiculo)).uniqueResult();
 		return vehiculo;
 	}
 
 	@Override
+	public Vehiculo buscarfkSucursalV(Integer fkSucursalV) {
+		final Session session = sessionFactory.getCurrentSession();
+		Vehiculo fkSucursal = (Vehiculo) session.createCriteria(Vehiculo.class)
+				.add(Restrictions.eq("fkSucursalV", fkSucursalV)).uniqueResult();
+		return fkSucursal;
+	}
+	//new
+	@Override
 	public List<Vehiculo> listarVehiculos() {
 		final Session session = sessionFactory.getCurrentSession();
-		List<Vehiculo> vehiculos = session.createCriteria(Vehiculo.class).list();
-		return vehiculos;
+		return session.createCriteria(Vehiculo.class).list();
 	}
-
-	@Override
-	public void guardarNuevoVehiculo(Vehiculo vehiculo) {
-		final Session session = sessionFactory.getCurrentSession();
-		session.saveOrUpdate(vehiculo);
-	}
+	
 
 }
