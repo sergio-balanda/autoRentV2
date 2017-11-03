@@ -22,7 +22,7 @@ public class ControladorLogin {
 	private ServicioLogin servicioLogin;
 	
 	@RequestMapping("/login")
-	public ModelAndView irALogin(@RequestParam ("email") String email) {
+	public ModelAndView irALogin(@RequestParam (value="email", required=false) String email) {
 
 		ModelMap modelo = new ModelMap();
 		Usuario usuario = new Usuario();
@@ -36,9 +36,9 @@ public class ControladorLogin {
 	}
 	
 	
-	@RequestMapping("/administrador")
-	public ModelAndView irAAdmin() {
-		return new ModelAndView("administrador");
+	@RequestMapping("/admin")
+	public ModelAndView irAadmin() {
+		return new ModelAndView("admin");
 	}
 	
 	// El método recibe un objeto Usuario el que tiene los datos ingresados en el form correspondiente y 
@@ -54,8 +54,9 @@ public class ControladorLogin {
 		if (usuarioBuscar != null) {
 			request.getSession().setAttribute("usuario", usuario);
 			
-			if ( usuario.getAdministrador() ) {
-				return new ModelAndView("redirect:/administrador");
+			if ( usuarioBuscar.getAdministrador() ) {
+				//modelo.put("usuario", usuario);
+				return new ModelAndView("redirect:/admin");
 			} else {
 				
 				return new ModelAndView("redirect:/pasajeros");
@@ -71,5 +72,10 @@ public class ControladorLogin {
 	
 	}
 
+	@RequestMapping("/logout")
+	public ModelAndView logout(HttpServletRequest request) {
+		request.getSession().removeAttribute("usuario");
+		return new ModelAndView("redirect:/login");
+	}
 	
 }//fin
